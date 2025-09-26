@@ -16,7 +16,7 @@ export default function Navbar({ links, setOpenModal }: NavbarProps) {
     return (
         <>
             <nav className="px-6 py-4 bg-slate-700 text-white fixed top-0 w-full z-50">
-                <div className="container mx-auto flex justify-between items-center sm:px-5 md:px-10 lg:px-15">
+                <div className="container mx-auto flex justify-between items-center sm:px-6 md:px-10 lg:px-15">
                     <h1 className="font-semibold text-lg md:text-xl lg:text-2xl">
                         Healthcare
                     </h1>
@@ -39,7 +39,7 @@ export default function Navbar({ links, setOpenModal }: NavbarProps) {
             </nav>
             {isOpen && (
                 <nav className="px-6 py-4 bg-slate-800 text-white fixed top-15 w-full z-40 lg:hidden rounded-b-2xl">
-                    <div className="container mx-auto">
+                    <div className="container mx-auto sm:px-6 md:px-10 lg:px-15">
                         <ul className="lg:flex space-y-4 font-medium">
                             {links?.map((items, index) => (
                                 <li key={index}>
