@@ -3,6 +3,7 @@ import { FaCircleCheck, FaQuestion, FaLocationDot } from "react-icons/fa6";
 import { FaUserMd } from "react-icons/fa";
 import { useEffect } from "react";
 import CardDoctors from "@/components/about-page/CardDoctors";
+
 export default function About() {
     useEffect(() => {
         document.title = "Healthcare - About";

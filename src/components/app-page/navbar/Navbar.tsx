@@ -20,7 +20,7 @@ export default function Navbar({ links, setOpenModal }: NavbarProps) {
                     <h1 className="font-semibold text-lg md:text-xl lg:text-2xl">
                         Healthcare
                     </h1>
-                    <ul className="lg:flex space-x-8 hidden font-medium">
+                    <ul className="lg:flex gap-15 hidden font-medium">
                         {links?.map((items, index) => (
                             <li key={index}>
                                 <Link href={items.href} className="hover:text-teal-400 focus:text-teal-400">
