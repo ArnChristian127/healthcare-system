@@ -49,7 +49,7 @@ export default function Navbar({ links, setOpenModal }: NavbarProps) {
                                 </li>
                             ))}
                         </ul>
-                        <button onClick={() => setOpenModal(true)} className="px-4 py-2 bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 text-white rounded-sm font-medium cursor-pointer mt-4 transition duration-200">
+                        <button onClick={() => {setOpenModal(true); setIsOpen(false)}} className="px-4 py-2 bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 text-white rounded-sm font-medium cursor-pointer mt-4 transition duration-200">
                             LOGIN
                         </button>
                     </div>

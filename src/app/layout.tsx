@@ -5,37 +5,12 @@ import ModalAuthentication from "@/components/app-page/modals/ModalAuthenticatio
 import "./globals.css";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const [role, setRole] = useState<"patient" | "doctor" | 'sign-up' | null>(null);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (role === "doctor") {
-      console.log("Doctor Sign In");
-    } else if (role === "patient") {
-      console.log("Doctor Sign In");
-    } else if (role === "sign-up") {
-      console.log("Sign Up");
-    }
-  }
   return (
     <html lang="en">
       <body className="text-sm mt-15 text-gray-700">
         {isOpenModal && (
-          <ModalAuthentication
-            role={role}
-            setRole={setRole}
-            onClick={setIsOpenModal}
-            onSubmit={handleSubmit}
-            username={username}
-            email={email}
-            password={password}
-            onChangeUsername={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
-            onChangeEmail={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-            onChangePassword={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-          />
+          <ModalAuthentication onClick={setIsOpenModal}/>
         )}
         <Navbar
           setOpenModal={setIsOpenModal}
