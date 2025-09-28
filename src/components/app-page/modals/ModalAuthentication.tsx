@@ -41,12 +41,11 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
             }
         }
         else if (roles === 'patient') {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            const pattern = /^[^@]+@(?!doctor\.com$).+$/;
-            if (!pattern.test(email)) {
+            if (email.endsWith('@doctor.com')) {
                 setSubmitting(false);
                 return setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status="Email must be a patient email!" />);
             }
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             const id = data?.user?.id;
             if (error) {
                 console.log(error.message);
@@ -58,9 +57,8 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
             }
         } else if (roles === 'doctor') {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            const pattern = /^[a-zA-Z0-9._%+-]+@doctor\.com$/;
             const id = data?.user?.id;
-            if (!pattern.test(email)) {
+            if (!email.endsWith('@doctor.com')) {
                 setSubmitting(false);
                 return setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status="Email must be a doctor email!" />);
             }
@@ -94,6 +92,7 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
         setUsername('');
         setAddress('');
         setDate('');
+        setPhoneNumber('');
     }
     useEffect(() => {
         loading();

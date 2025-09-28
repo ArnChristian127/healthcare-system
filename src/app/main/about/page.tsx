@@ -1,9 +1,11 @@
 "use client";
-import { FaCircleCheck, FaQuestion, FaLocationDot } from "react-icons/fa6";
+import { FaCircleCheck } from "react-icons/fa6";
+import { IoCallSharp } from "react-icons/io5";
 import { FaUserMd } from "react-icons/fa";
 import { useEffect } from "react";
 import CardDoctors from "@/components/about-page/CardDoctors";
-
+import Card from "@/components/app-page/card/Card";
+import TextIcon from "@/components/app-page/typograhy/TextIcon";
 export default function About() {
     useEffect(() => {
         document.title = "Healthcare - About";
@@ -30,18 +32,9 @@ export default function About() {
                             {"lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
                         </p>
                         <div className="mt-3 flex flex-col gap-3 items-center justify-center lg:items-start">
-                            <div className="flex items-center gap-2">
-                                <FaCircleCheck className="text-teal-400" />
-                                <p>lorem ipsum dolor sit amet</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <FaCircleCheck className="text-teal-400" />
-                                <p>lorem ipsum dolor sit amet</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <FaCircleCheck className="text-teal-400" />
-                                <p>lorem ipsum dolor sit amet</p>
-                            </div>
+                            <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
+                            <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
+                            <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
                         </div>
                     </div>
                 </div>
@@ -80,42 +73,21 @@ export default function About() {
                         </p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        <div className="bg-white p-5 rounded-md shadow border border-gray-300 flex justify-center items-center text-center flex-col gap-5">
-                            <div className="w-10 h-10 md:h-15 md:w-15 lg:h-20 lg:w-20 bg-teal-400 flex justify-center items-center text-white rounded-full">
-                                <FaQuestion className="text-2xl md:text-3xl lg:text-4xl" />
-                            </div>
-                            <h1 className="text-lg md:text-xl lg:text-2xl font-medium">
-                                Health Consultation
-                            </h1>
-                            <p>
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </p>
-                        </div>
-                        <div className="bg-white p-5 rounded-md shadow border border-gray-300 flex justify-center items-center text-center flex-col gap-5">
-                            <div className="w-10 h-10 md:h-15 md:w-15 lg:h-20 lg:w-20 bg-teal-400 flex justify-center items-center text-white rounded-full">
-                                <FaLocationDot className="text-2xl md:text-3xl lg:text-4xl" />
-                            </div>
-                            <h1 className="text-lg md:text-xl lg:text-2xl font-medium">
-                                Find Health
-                            </h1>
-                            <p>
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </p>
-                        </div>
-                        <div className="bg-white p-5 rounded-md shadow border border-gray-300 flex justify-center items-center text-center flex-col gap-5">
-                            <div className="w-10 h-10 md:h-15 md:w-15 lg:h-20 lg:w-20 bg-teal-400 flex justify-center items-center text-white rounded-full">
-                                <FaUserMd className="text-2xl md:text-3xl lg:text-4xl" />
-                            </div>
-                            <h1 className="text-lg md:text-xl lg:text-2xl font-medium">
-                                Search For Doctor
-                            </h1>
-                            <p>
-                                lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </p>
-                        </div>
+                        <Card
+                            icons={<FaUserMd />}
+                            title="Health Consultation"
+                            description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                        />
+                        <Card
+                            icons={<IoCallSharp />}
+                            title="Emergency Call"
+                            description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                        />
+                        <Card
+                            icons={<FaUserMd />}
+                            title="Search For Doctor"
+                            description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                        />
                     </div>
                 </div>
             </div>

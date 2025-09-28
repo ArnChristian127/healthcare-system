@@ -1,18 +1,17 @@
 "use client";
 import { CiCalendarDate, CiMail, CiPhone } from "react-icons/ci";
 import { useState, useEffect } from "react";
+import { fetchPatientWithId, fetchAppointmentWithId, fetchRealTimeData, fetchAppointmentIsReady } from "@/utils/supabase/functions";
 import { FaUserMd, FaBriefcaseMedical } from "react-icons/fa";
 import { PiAddressBookLight } from "react-icons/pi";
-import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
 export default function Dashboard() {
     const params = useParams();
-    const supabase = createClient();
     const [user, setUser] = useState<any>(null);
-    const [appointment, setAppointment] = useState<any>(null);
+    const [appointment, setAppointment] = useState<any | null>([]);
     const id = params.id;
-    const fetch = async () => {
-        const { data, error } = await supabase.from('patient_user').select('*').eq('id', id).single();
+    const fetchPatient = async () => {
+        const { data, error } = await fetchPatientWithId(id);
         if (error) {
             console.log(error);
         } else {
@@ -20,16 +19,26 @@ export default function Dashboard() {
         }
     }
     const fetchAppointment = async () => {
-        const { data, error } = await supabase.from('appointment').select('*').eq('patient_id', id);
+        const { data, error } = await fetchAppointmentWithId("patient_id", id);
         if (error) {
             console.log(error);
         } else {
             setAppointment(data);
         }
     }
+    const fetchAppointmentReady = async () => {
+        await fetchAppointmentIsReady(new Date().toISOString().split("T")[0]);
+    }
     useEffect(() => {
         fetchAppointment();
-        fetch();
+        fetchAppointmentReady();
+        fetchPatient();
+        fetchRealTimeData({
+            event: "*",
+            changes: "postgres_changes",
+            table: "appointment",
+            callBack: fetchAppointment,
+        });
     }, []);
     return (
         <div className="text-gray-700">
@@ -48,11 +57,11 @@ export default function Dashboard() {
                 </div>
                 <div className="bg-blue-300 p-5 rounded-lg space-y-3 shadow-lg shadow-blue-200">
                     <div className="flex justify-between items-center">
-                        <h1 className="font-semibold">APPOINTMENT COUNT</h1>
+                        <h1 className="font-semibold">CURRENT APPOINTMENT DOCTOR</h1>
                         <FaUserMd className="text-lg" />
                     </div>
                     <h1 className="text-lg md:text-xl lg:text-2xl font-semibold">
-                        0
+                        Dr. Rosales
                     </h1>
                 </div>
                 <div className="bg-red-400 p-5 rounded-lg space-y-3 shadow-lg shadow-red-300">
@@ -75,22 +84,22 @@ export default function Dashboard() {
                     </h1>
                 </div>
                 <hr className="border-t border-gray-300 w-full" />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <CiCalendarDate className="text-lg md:text-xl lg:text-2xl" />
                     <h1>Date:</h1>
                     <h1>{user?.date_of_birth}</h1>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <CiMail className="text-lg md:text-xl lg:text-2xl" />
                     <h1>Email:</h1>
                     <h1>{user?.email}</h1>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <PiAddressBookLight className="text-lg md:text-xl lg:text-2xl" />
                     <h1>Address:</h1>
                     <h1>{user?.address}</h1>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                     <CiPhone className="text-lg md:text-xl lg:text-2xl" />
                     <h1>Phone Number:</h1>
                     <h1>+0{user?.phone_number}</h1>
@@ -99,28 +108,35 @@ export default function Dashboard() {
             <h1 className="text-lg md:text-xl lg:text-2xl font-semibold mt-10">
                 Appointment History
             </h1>
-            <div className="overflow-x-auto mt-5">
-                <table className="table-auto border-collapse border border-gray-400 min-w-full text-left">
-                    <thead>
-                        <tr className="bg-gray-200">
-                            <th className="border border-gray-400 px-4 py-2">ID</th>
-                            <th className="border border-gray-400 px-4 py-2">Name</th>
-                            <th className="border border-gray-400 px-4 py-2">Schedule</th>
-                            <th className="border border-gray-400 px-4 py-2">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {appointment?.map((item: any, index: number) => (
-                            <tr key={index}>
-                                <td className="border border-gray-400 px-4 py-2">{index + 1}</td>
-                                <td className="border border-gray-400 px-4 py-2">Dr.{item.doctor_name}</td>
-                                <td className="border border-gray-400 px-4 py-2">{item.appointment_date} / {item.appointment_time}</td>
-                                <td className="border border-gray-400 px-4 py-2">{item.status}</td>
+            {appointment.length > 0 ? (
+                <div className="overflow-x-auto mt-5">
+                    <table className="table-auto border-collapse border border-gray-400 min-w-full text-left">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="border border-gray-400 px-4 py-2">ID</th>
+                                <th className="border border-gray-400 px-4 py-2">Name</th>
+                                <th className="border border-gray-400 px-4 py-2">Schedule</th>
+                                <th className="border border-gray-400 px-4 py-2">Status</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {appointment?.map((item: any, index: number) => (
+                                <tr key={index}>
+                                    <td className="border border-gray-400 px-4 py-2">{index + 1}</td>
+                                    <td className="border border-gray-400 px-4 py-2">Dr.{item.doctor_name}</td>
+                                    <td className="border border-gray-400 px-4 py-2">{item.appointment_datetime}</td>
+                                    <td className="border border-gray-400 px-4 py-2">{item.status}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <>
+                    <hr className="border-t border-gray-300 w-full my-2" />
+                    <h1>No appointment history found.</h1>
+                </>
+            )}
         </div>
     )
 }

@@ -4,8 +4,7 @@ import { useParams } from "next/navigation";
 import { IoBarChartSharp } from "react-icons/io5";
 import { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import Sidebar from "@/components/patient-page/Navbar/Sidebar";
-import Navbar from "@/components/patient-page/Navbar/Navbar";
+import DynamicNavigation from "@/components/patient-page/navbar/DynamicNavigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -21,16 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [])
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      <Sidebar
-        id={id}
-        linkList={[
-          { href: `dashboard`, label: "Overview", icons: <IoBarChartSharp /> },
-          { href: `appointment`, label: "Appointment", icons: <FaUserMd /> },
-          { href: `history`, label: "History", icons: <FaHistory /> },
-          { href: `balance`, label: "Balance", icons: <FaMoneyCheck /> },
-        ]}
-      />
-      <Navbar
+      <DynamicNavigation
         id={id}
         linkList={[
           { href: `dashboard`, label: "Overview", icons: <IoBarChartSharp /> },

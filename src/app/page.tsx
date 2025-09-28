@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 export default function App() {
     const router = useRouter();
     useEffect(() => {
-        router.push("/main");
+        router.replace("/main");
     }, [router]);
     return null;
 }
