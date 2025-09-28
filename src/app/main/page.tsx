@@ -17,7 +17,7 @@ export default function Home() {
                     <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl mt-3">Bringing health</h1>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl mt-3">to life for the whole family</h1>
                     <div className="mt-10">
-                        <Link href="/about" className="border py-2 px-6 md:py-3 md:px-8 lg:py-4 lg:px-10 rounded-md hover:border-teal-400 hover:bg-teal-400 focus:border-teal-400 focus:bg-teal-400 transition duration-200 cursor-pointer">
+                        <Link href="/main/about" className="border py-2 px-6 md:py-3 md:px-8 lg:py-4 lg:px-10 rounded-md hover:border-teal-400 hover:bg-teal-400 focus:border-teal-400 focus:bg-teal-400 transition duration-200 cursor-pointer">
                             LEARN MORE
                         </Link>
                     </div>

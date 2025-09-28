@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { signUp, signIn } from "@/utils/supabase/functions";
+import { signUp } from "@/utils/supabase/functions";
 import { IoIosWarning } from "react-icons/io";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoExitOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import AuthToast from "../toast/AuthToast";
 type ModalAuthenticationProps = {
     onClick: (v: boolean) => void;
@@ -14,20 +15,22 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [address, setAddress] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [date, setDate] = useState('');
     const [isLoading, setLoading] = useState(true);
     const [isSubmitting, setSubmitting] = useState(false);
     const [status, setStatus] = useState<any | null>(null);
+    const supabase = createClient();
     const router = useRouter();
     const handlerForm = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSubmitting(true);
         setStatus(null);
         if (roles === 'sign-up') {
-            const error = await signUp(username, email, password, address, date);
+            const error = await signUp(username, email, password, address, date, phoneNumber);
             if (error) {
                 console.log(error);
-                setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status={error}/>);
+                setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status={error} />);
             } else {
                 console.log('success');
                 setRoles('patient');
@@ -38,28 +41,51 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
             }
         }
         else if (roles === 'patient') {
-            const { data, error } = await signIn(email, password);
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const pattern = /^[^@]+@(?!doctor\.com$).+$/;
+            if (!pattern.test(email)) {
+                setSubmitting(false);
+                return setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status="Email must be a patient email!" />);
+            }
             const id = data?.user?.id;
             if (error) {
                 console.log(error.message);
-                setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status={error.message}/>);
+                setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status={error.message} />);
             } else {
                 console.log('success');
                 router.push(`/auth/user-patient/${id}/dashboard`);
                 onClick(false);
             }
         } else if (roles === 'doctor') {
-            console.log('doctor');
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            const pattern = /^[a-zA-Z0-9._%+-]+@doctor\.com$/;
+            const id = data?.user?.id;
+            if (!pattern.test(email)) {
+                setSubmitting(false);
+                return setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status="Email must be a doctor email!" />);
+            }
+            if (error) {
+                console.log(error);
+                setStatus(<AuthToast icons={<IoIosWarning className="text-red-400 text-lg" />} isRed={true} status={error.message} />);
+            } else {
+                console.log('success');
+                router.push(`/auth/user-doctor/${id}/`);
+                onClick(false);
+            }
         }
         setSubmitting(false);
     }
-    const loading = () => {
+    const loading = async () => {
         setLoading(true);
-        const timer = setTimeout(() => {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("session", data);
+            router.push('/main');
             setLoading(false);
-        }, 1500);
-        return () => clearTimeout(timer);
-    }
+        }
+    };
     const back = () => {
         setRoles(null);
         setStatus(null);
@@ -89,7 +115,7 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
                                 {roles === 'doctor' && 'Doctor Sign In'}
                                 {!roles && 'Sign In'}
                             </h1>
-                            <button className="cursor-pointer hover:text-teal-500 focus:text-teal-500" onClick={() => onClick(false)}>
+                            <button type="button" className="cursor-pointer hover:text-teal-500 focus:text-teal-500" onClick={() => onClick(false)}>
                                 <IoExitOutline className="text-lg md:text-xl lg:text-2xl" />
                             </button>
                         </div>
@@ -125,16 +151,28 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                                 />
                                 {roles === 'sign-up' && (
-                                    <div className="flex md:flex-row lg:flex-row justify-between gap-3 flex-col">
-                                        <div className="flex flex-col w-full">
-                                            <label htmlFor="address" className="font-medium text-md md:text-lg">Address</label>
-                                            <input
-                                                id="address"
-                                                type="text"
-                                                className="w-full outline-none border border-gray-300 px-3 p-3 rounded-lg mt-2"
-                                                value={address}
-                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
-                                            />
+                                    <>
+                                        <div className="flex md:flex-row lg:flex-row justify-between gap-3 flex-col">
+                                            <div className="flex flex-col w-full">
+                                                <label htmlFor="address" className="font-medium text-md md:text-lg">Address</label>
+                                                <input
+                                                    id="address"
+                                                    type="text"
+                                                    className="w-full outline-none border border-gray-300 px-3 p-3 rounded-lg mt-2"
+                                                    value={address}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddress(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="flex flex-col w-full">
+                                                <label htmlFor="number" className="font-medium text-md md:text-lg">Phone Number</label>
+                                                <input
+                                                    id="number"
+                                                    type="text"
+                                                    className="w-full outline-none border border-gray-300 px-3 p-3 rounded-lg mt-2"
+                                                    value={phoneNumber}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNumber(e.target.value)}
+                                                />
+                                            </div>
                                         </div>
                                         <div className="flex-col flex">
                                             <label htmlFor="date" className="font-medium text-md md:text-lg">Date</label>
@@ -146,7 +184,7 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)}
                                             />
                                         </div>
-                                    </div>
+                                    </>
                                 )}
                                 {status}
                                 {roles !== 'sign-up' && (
@@ -170,10 +208,10 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
                         )}
                         {!roles && (
                             <>
-                                <button type="button" onClick={() => setRoles('patient')} className="w-full border hover:bg-gray-100 focus:bg-gray-100 border-gray-300 rounded-lg p-3 font-semibold cursor-pointer transition duration-200">
+                                <button type="button" onClick={() => setRoles('patient')} className="w-full border hover:bg-gray-100 focus:bg-gray-100 border-gray-300 rounded-lg p-3 font-medium cursor-pointer transition duration-200">
                                     Patient
                                 </button>
-                                <button type="button" onClick={() => setRoles('doctor')} className="w-full bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 rounded-lg p-3 text-white cursor-pointer transition duration-200">
+                                <button type="button" onClick={() => setRoles('doctor')} className="w-full bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 rounded-lg p-3 text-white cursor-pointer transition duration-200 font-medium">
                                     Doctor
                                 </button>
                                 <p className="text-center">

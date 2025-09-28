@@ -2,13 +2,25 @@
 import { FaUserMd, FaHistory, FaMoneyCheck } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { IoBarChartSharp } from "react-icons/io5";
-import Sidebar from "@/components/patient-page/Sidebar";
+import { useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import Sidebar from "@/components/patient-page/Navbar/Sidebar";
+import Navbar from "@/components/patient-page/Navbar/Navbar";
 
-export default function UserPatientLayout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const supabase = createClient();
   const params = useParams();
   const id = params.id;
+
+  useEffect(() => {
+    const fetch = async () => {
+      const { data } = await supabase.from("patient_user").select("*").eq("id", id).single();
+      document.title = `HealthCare - ${data?.username}`;
+    }
+    fetch();
+  }, [])
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       <Sidebar
         id={id}
         linkList={[
@@ -18,8 +30,19 @@ export default function UserPatientLayout({ children }: { children: React.ReactN
           { href: `balance`, label: "Balance", icons: <FaMoneyCheck /> },
         ]}
       />
-      <main className="p-6 flex-1">
-        {children}
+      <Navbar
+        id={id}
+        linkList={[
+          { href: `dashboard`, label: "Overview", icons: <IoBarChartSharp /> },
+          { href: `appointment`, label: "Appointment", icons: <FaUserMd /> },
+          { href: `history`, label: "History", icons: <FaHistory /> },
+          { href: `balance`, label: "Balance", icons: <FaMoneyCheck /> },
+        ]}
+      />
+      <main className="px-6 py-4 mt-10 lg:mt-0 flex-1 lg:h-screen lg:overflow-y-auto">
+        <div className="container mx-auto py-5 lg:py-0">
+          {children}
+        </div>
       </main>
     </div>
   );
