@@ -48,6 +48,7 @@ export async function fetchPatientWithId(id: any) {
   const { data, error } = await supabase
     .from("patient_user")
     .select("*")
+    .eq("id", id)
     .single();
   return { data, error };
 }
