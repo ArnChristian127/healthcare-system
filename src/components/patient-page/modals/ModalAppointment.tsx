@@ -13,15 +13,14 @@ export default function ModalAppointment({
   onClose,
 }: ModalAppointmentProps) {
   const supabase = createClient();
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [datetime, setDatetime] = useState("");
   const [status, setStatus] = useState<any>(null);
   const [isSubmitting, setSubmitting] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus(null);
     setSubmitting(true);
-    if (!date || !time) {
+    if (!datetime) {
       setStatus(
         <AuthToast
           icons={<IoIosWarning className="text-red-400 text-lg" />}
@@ -32,8 +31,8 @@ export default function ModalAppointment({
       setSubmitting(false);
       return;
     }
-    const datetime = new Date(`${date}T${time}:00`);
-    const isoDatetime = datetime.toISOString();
+    const localDate = new Date(datetime);
+    const isoDatetime = localDate.toISOString();
     const { data, error } = await supabase.from("appointment").insert({
       doctor_id: doctor.id,
       doctor_name: doctor.username,
@@ -68,21 +67,14 @@ export default function ModalAppointment({
             Appointment Schedule
           </h1>
           <div>
-            <label className="text-sm font-medium text-gray-700">Date</label>
+            <label className="text-sm font-medium text-gray-700">
+              Date & Time
+            </label>
             <input
-              type="date"
+              type="datetime-local"
               className="mt-1 w-full border border-gray-300 rounded-md p-2 outline-none"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Time</label>
-            <input
-              type="time"
-              className="mt-1 w-full border border-gray-300 rounded-md p-2 outline-none"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
+              value={datetime}
+              onChange={(e) => setDatetime(e.target.value)}
             />
           </div>
           {status}

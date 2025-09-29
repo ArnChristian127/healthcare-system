@@ -48,7 +48,6 @@ export async function fetchPatientWithId(id: any) {
   const { data, error } = await supabase
     .from("patient_user")
     .select("*")
-    .eq("id", id)
     .single();
   return { data, error };
 }
@@ -101,20 +100,18 @@ export async function fetchRealTimeData({
   };
 }
 export async function fetchAppointmentIsReady(datetime: string) {
-  const jsDate = new Date(datetime);
-  const isoDatetime = jsDate.toISOString();
   const supabase = createClient();
   const { data } = await supabase
     .from("appointment")
     .select("*")
-    .eq("appointment_datetime", isoDatetime)
+    .lte("appointment_datetime", datetime)
     .eq("status", "pending");
   if (data?.length) {
     await supabase
       .from('appointment')
-      .update({ status: 'ready' })
+      .update({ status: 'Wait for confirmation' })
       .eq('id', data[0].id)
   }
-  console.log(isoDatetime);
+  console.log(datetime);
   return true;
 }
