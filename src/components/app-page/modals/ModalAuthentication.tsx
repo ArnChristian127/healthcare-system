@@ -100,7 +100,7 @@ export default function ModalAuthentication({ onClick }: ModalAuthenticationProp
     return (
         <>
             <div className="inset-0 fixed z-60 bg-black opacity-50" />
-            <div className="inset-0 fixed z-60 flex items-center justify-center px-3">
+            <div className="inset-0 fixed z-60 flex items-center justify-center px-3 py-3">
                 {isLoading ? (
                     <div className="bg-white p-5 rounded-lg">
                         <div className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 border-3 border-teal-400 border-t-transparent rounded-full animate-spin" />
