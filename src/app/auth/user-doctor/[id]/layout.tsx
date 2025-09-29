@@ -1,14 +1,27 @@
 "use client";
 import { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 export default function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const supabase = createClient();
   const params = useParams();
+  const router = useRouter();
   const id = params.id;
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data, error } = await supabase.auth.getUser();
+      if (!data.user || error) {
+        router.replace(`/main`);
+        console.log(error);
+        return;
+      }
+    };
+    fetchSession();
+  }, [router, supabase]);
   useEffect(() => {
     const fetch = async () => {
       const { data } = await supabase

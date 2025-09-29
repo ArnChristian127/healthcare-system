@@ -12,24 +12,20 @@ export default function MainApp({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   useEffect(() => {
     const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        router.push(`/main`);
+      const { data, error } = await supabase.auth.getUser();
+      if (!data.user || error) {
         return;
       }
-      const emailCheck = session?.user?.email?.endsWith("@doctor.com");
+      const emailCheck = data?.user?.email?.endsWith("@doctor.com");
       if (emailCheck) {
-        router.replace(`/auth/user-doctor/${session?.user?.id}`);
-      } else{
-        router.replace(`/auth/user-patient/${session?.user?.id}`);
+        router.replace(`/auth/user-doctor/${data?.user?.id}`);
+      }
+      else{
+        router.replace(`/auth/user-patient/${data?.user?.id}`);
       }
     };
     fetchSession();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-      fetchSession();
-    })
-    return () => subscription.unsubscribe()
-  }, []);
+  }, [router, supabase]);
   return (
     <div className={`text-sm mt-15 text-gray-700`}>
       {isOpenModal && <ModalAuthentication onClick={setIsOpenModal} />}

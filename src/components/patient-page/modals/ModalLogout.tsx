@@ -11,12 +11,10 @@ export default function ModalLogout({ onClose }: ModalLogoutProps) {
   const supabase = createClient();
   const handleLogout = async () => {
     setIsLoading(true);
-    await supabase.auth.signOut();
-    const { data, error } = await supabase.auth.getSession();
+    const { error } = await supabase.auth.signOut();
     if (error) {
       console.log(error);
     } else {
-      console.log("session", data);
       router.push("/main");
       onClose(false);
       setIsLoading(false);
