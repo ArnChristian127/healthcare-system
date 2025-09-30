@@ -4,14 +4,13 @@ import { useParams, useRouter } from "next/navigation";
 import { IoBarChartSharp } from "react-icons/io5";
 import { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import DynamicNavigation from "@/components/navbar/DynamicNavigation";
+import NavbarDynamic from "@/components/navbar/NavbarDynamic";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
   const params = useParams();
   const router = useRouter();
   const id = params.id;
-
   useEffect(() => {
     const fetchSession = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -36,7 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, []);
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      <DynamicNavigation
+      <NavbarDynamic
         id={id}
         target="patient_user"
         linkList={[

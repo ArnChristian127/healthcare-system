@@ -4,8 +4,8 @@ import { FaUserMd } from "react-icons/fa";
 import { IoCallSharp } from "react-icons/io5";
 import { useEffect } from "react";
 import Link from "next/link";
-import Card from "@/components/app-page/card/Card";
-import TextIcon from "@/components/app-page/typograhy/TextIcon";
+import Card from "@/components/card/Card";
+import TextIcon from "@/components/typograhy/TextIcon";
 export default function Home() {
     useEffect(() => {
         document.title = "Healthcare - Home";

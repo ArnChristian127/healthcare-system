@@ -4,19 +4,29 @@ import {
   fetchPatientWithId,
   fetchDoctorOnline,
   fetchRealTimeData,
+  fetchAppointmentWithId,
 } from "@/utils/supabase/functions";
 import { CiPhone } from "react-icons/ci";
 import { FaUserMd } from "react-icons/fa";
 import { useParams } from "next/navigation";
-import ModalAppointment from "@/components/patient-page/modals/ModalAppointment";
+import ModalAppointment from "@/components/modals/ModalAppointment";
 
 export default function Appointment() {
   const [showModal, setShowModal] = useState(null);
   const [patient, setPatient] = useState<any>(null);
   const [doctorsOnline, setDoctorsOnline] = useState<any>([]);
+  const [appointment, setAppointment] = useState<any>([]);
   const [doctorOnline, setDoctorOnline] = useState(0);
   const params = useParams();
   const patient_id = params.id;
+  const fetchAppointment = async () => {
+    const { data, error } = await fetchAppointmentWithId("patient_id", patient_id);
+    if (error) {
+      console.log(error);
+    } else {
+      setAppointment(data);
+    }
+  };
   const fetchPatient = async () => {
     const { data, error } = await fetchPatientWithId(patient_id);
     if (error) {
@@ -37,11 +47,20 @@ export default function Appointment() {
   useEffect(() => {
     fetchPatient();
     fetchDoctor();
+    fetchAppointment();
     fetchRealTimeData({
+      channel: "doctor_changes",
       event: "*",
       changes: "postgres_changes",
       table: "doctor_user",
       callBack: fetchDoctor,
+    });
+    fetchRealTimeData({
+      channel: "appointment_patient_changes",
+      event: "*",
+      changes: "postgres_changes",
+      table: "appointment",
+      callBack: fetchAppointment,
     });
   }, []);
   return (
@@ -55,10 +74,10 @@ export default function Appointment() {
       )}
       <div className="text-gray-700">
         <h1 className="text-lg md:text-xl lg:text-2xl font-semibold">
-          Appointment
+          Doctors
         </h1>
         <div className="flex items-center gap-3 mt-3">
-          <div className="h-3 w-3 rounded-full bg-green-400"/>
+          <div className="h-3 w-3 rounded-full bg-green-400" />
           <p>Online: {doctorOnline}</p>
         </div>
         <hr className="border-t border-gray-300 w-full my-5" />
@@ -100,9 +119,49 @@ export default function Appointment() {
           </div>
         ) : (
           <>
-            <p>
-              No Doctors Available.
-            </p>
+            <p>No Doctors Available.</p>
+          </>
+        )}
+        <h1 className="text-lg md:text-xl lg:text-2xl font-semibold mt-10">
+          Appointment Schedule
+        </h1>
+        {appointment.length > 0 ? (
+          <div className="overflow-x-auto mt-5">
+            <table className="table-auto border-collapse border border-gray-400 min-w-full text-left">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border border-gray-400 px-4 py-2">ID</th>
+                  <th className="border border-gray-400 px-4 py-2">Name</th>
+                  <th className="border border-gray-400 px-4 py-2">
+                    Date & Time
+                  </th>
+                  <th className="border border-gray-400 px-4 py-2">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointment?.map((item: any, index: number) => (
+                  <tr key={index}>
+                    <td className="border border-gray-400 px-4 py-2">
+                      {index + 1}
+                    </td>
+                    <td className="border border-gray-400 px-4 py-2">
+                      Dr.{item.doctor_name}
+                    </td>
+                    <td className="border border-gray-400 px-4 py-2">
+                      {new Date(item.appointment_datetime).toLocaleString()}
+                    </td>
+                    <td className="border border-gray-400 px-4 py-2">
+                      {item.status}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <>
+            <hr className="border-t border-gray-300 w-full my-2" />
+            <h1>No appointment schedule available.</h1>
           </>
         )}
       </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { IoIosWarning } from "react-icons/io";
-import AuthToast from "@/components/app-page/toast/AuthToast";
+import AuthToast from "../toast/AuthToast";
 type ModalAppointmentProps = {
   doctor: any;
   patient: any;

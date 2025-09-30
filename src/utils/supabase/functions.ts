@@ -78,12 +78,14 @@ export async function fetchDoctorOnline() {
   return { data, error };
 }
 type realTimeProps = {
+  channel: string;
   event: "INSERT" | "UPDATE" | "DELETE" | "*";
   changes: any;
   table: string;
   callBack: (payload: any) => void;
 };
 export async function fetchRealTimeData({
+  channel,
   event,
   changes,
   table,
@@ -91,7 +93,7 @@ export async function fetchRealTimeData({
 }: realTimeProps) {
   const supabase = createClient();
   const RealTimeChannel = supabase
-    .channel("event_changes")
+    .channel(channel)
     .on(
       changes,
       {

@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import Navbar from "@/components/app-page/navbar/Navbar";
-import ModalAuthentication from "@/components/app-page/modals/ModalAuthentication";
-import Footer from "@/components/app-page/footer/FooterHome";
+import Navbar from "@/components/navbar/Navbar";
+import ModalAuthentication from "@/components/modals/ModalAuthentication";
+import Footer from "@/components/footer/FooterHome";
 
 export default function MainApp({ children }: { children: React.ReactNode }) {
   const [isOpenModal, setIsOpenModal] = useState(false);

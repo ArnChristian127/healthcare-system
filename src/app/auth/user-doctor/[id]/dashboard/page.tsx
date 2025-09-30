@@ -8,12 +8,11 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { FaUserMd, FaBriefcaseMedical } from "react-icons/fa";
-import { CiMail, CiPhone } from "react-icons/ci";
+import { CiMail, CiPhone, CiUser } from "react-icons/ci";
 export default function Dashboard() {
   const [appointmentRequest, setAppointmentRequest] = useState(0);
   const [doctorOnline, setDoctorOnline] = useState(0);
   const [user, setUser] = useState<any>(null);
-  const [appointment, setAppointment] = useState<any | null>([]);
   const params = useParams();
   const id = params.id;
   const fetchDoctor = async () => {
@@ -26,38 +25,22 @@ export default function Dashboard() {
   };
   const fetchAppointment = async () => {
     const supabase = createClient();
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("appointment")
       .select("*")
       .in("status", ["Pending", "Wait for confirmation"]);
-    if (error) {
-      console.log(error);
-    } else {
-      setAppointment(data);
-      setAppointmentRequest(data?.length || 0);
-    }
+    setAppointmentRequest(data?.length || 0);
   };
   const fetchDoctorOnlineCount = async () => {
     const { data } = await fetchDoctorOnline();
     setDoctorOnline(data?.length || 0);
-  };
-  const handleApprove = async (id: string) => {
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("appointment")
-      .update({ status: "Approved" })
-      .eq("id", id);
-    if (error) {
-      console.log(error);
-    } else {
-      fetchAppointment();
-    }
   };
   useEffect(() => {
     fetchDoctor();
     fetchDoctorOnlineCount();
     fetchAppointment();
     fetchRealTimeData({
+      channel: "appointment_doctor_changes",
       event: "*",
       changes: "postgres_changes",
       table: "appointment",
@@ -73,6 +56,7 @@ export default function Dashboard() {
         <div className="bg-blue-300 p-5 rounded-lg space-y-3 shadow-lg shadow-blue-200">
           <div className="flex justify-between items-center">
             <h1 className="font-semibold">APPOINTMENT REQUEST</h1>
+            <CiUser className="text-lg" />
           </div>
           <h1 className="text-lg md:text-xl lg:text-2xl font-semibold">
             {appointmentRequest}
@@ -81,6 +65,7 @@ export default function Dashboard() {
         <div className="bg-cyan-400 p-5 rounded-lg space-y-3 shadow-lg shadow-cyan-300">
           <div className="flex justify-between items-center">
             <h1 className="font-semibold">DOCTORS ONLINE</h1>
+            <FaUserMd className="text-lg" />
           </div>
           <h1 className="text-lg md:text-xl lg:text-2xl font-semibold">
             {doctorOnline}
@@ -122,58 +107,6 @@ export default function Dashboard() {
           <h1>{user?.specialist}</h1>
         </div>
       </div>
-      <h1 className="text-lg md:text-xl lg:text-2xl font-semibold mt-10">
-        Appointments Schedule
-      </h1>
-      {appointment.length > 0 ? (
-        <div className="overflow-x-auto mt-5">
-          <table className="table-auto border-collapse border border-gray-400 min-w-full text-left">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border border-gray-400 px-4 py-2">ID</th>
-                <th className="border border-gray-400 px-4 py-2">
-                  Patient Name
-                </th>
-                <th className="border border-gray-400 px-4 py-2">
-                  Date & Time
-                </th>
-                <th className="border border-gray-400 px-4 py-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointment?.map((item: any, index: number) => (
-                <tr key={index}>
-                  <td className="border border-gray-400 px-4 py-2">
-                    {index + 1}
-                  </td>
-                  <td className="border border-gray-400 px-4 py-2">
-                    {item.patient_name}
-                  </td>
-                  <td className="border border-gray-400 px-4 py-2">
-                    {new Date(item.appointment_datetime).toLocaleString()}
-                  </td>
-                  <td className="border border-gray-400 px-4 py-2">
-                    <div className="flex items-center justify-between gap-5 flex-wrap">
-                      {item.status}
-                      <button
-                        onClick={() => handleApprove(item.id)}
-                        className="bg-teal-400 hover:bg-teal-500 focus:bg-teal-500 transition duration-300 px-3 py-2 text-white rounded-md cursor-pointer"
-                      >
-                        Approve
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <>
-          <hr className="border-t border-gray-300 w-full my-2" />
-          <h1>No appointment schedule available.</h1>
-        </>
-      )}
     </div>
   );
 }

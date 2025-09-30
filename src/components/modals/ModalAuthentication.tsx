@@ -5,7 +5,7 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { IoExitOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import AuthToast from "../toast/AuthToast";
+import AuthToast from "@/components/toast/AuthToast";
 
 type ModalAuthenticationProps = {
   onClick: (v: boolean) => void;

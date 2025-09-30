@@ -7,7 +7,7 @@ export default function Gallery() {
     const pictures = [];
     for (let i = 1; i <= 8; i++) {
         pictures.push(
-            <div className="w-full h-[200px] md:h-[250px] lg:h-[300px]">
+            <div key={i} className="w-full h-[200px] md:h-[250px] lg:h-[300px]">
                 <img className="w-full h-full object-cover" src={`https://technext.github.io/chiropractic/images/work-${i}.jpg`} alt={`Gallery ${i}`}/>
             </div>
         );

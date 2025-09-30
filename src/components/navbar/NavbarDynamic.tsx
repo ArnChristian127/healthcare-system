@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/client";
 import { CiLogout } from "react-icons/ci";
 import { BsList } from "react-icons/bs";
 import Link from "next/link";
-import ModalLogout from "../patient-page/modals/ModalLogout";
+import ModalLogout from "../modals/ModalLogout";
 
 type LinkList = {
   href: string;
@@ -15,7 +15,7 @@ type DynamicNavigationProps = {
   target: 'patient_user' | 'doctor_user';
   linkList: LinkList[];
 };
-export default function DynamicNavigation({
+export default function NavbarDynamic({
   id,
   linkList,
   target,

@@ -3,7 +3,9 @@ import { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useParams, useRouter } from "next/navigation";
 import { IoBarChartSharp } from "react-icons/io5";
-import DynamicNavigation from "@/components/navbar/DynamicNavigation";
+import { TbReportMedical } from "react-icons/tb";
+import { FaUserMd } from "react-icons/fa";
+import NavbarDynamic from "@/components/navbar/NavbarDynamic";
 export default function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -11,7 +13,6 @@ export default function Layout({
   const params = useParams();
   const router = useRouter();
   const id = params.id;
-
   useEffect(() => {
     const fetchSession = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -46,11 +47,13 @@ export default function Layout({
   }, []);
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      <DynamicNavigation
+      <NavbarDynamic
         id={id}
         target="doctor_user"
         linkList={[
-          { href: `dashboard`, label: "Overview", icons: <IoBarChartSharp /> }
+          { href: `dashboard`, label: "Overview", icons: <IoBarChartSharp /> },
+          { href: `appointment`, label: "Appointment", icons: <FaUserMd /> },
+          { href: `medicalreport`, label: "Medical Report", icons: <TbReportMedical /> },
         ]}
       />
       <main className="px-6 py-4 mt-10 lg:mt-0 flex-1 lg:h-screen lg:overflow-y-auto">

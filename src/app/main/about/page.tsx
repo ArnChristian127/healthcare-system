@@ -3,9 +3,9 @@ import { FaCircleCheck } from "react-icons/fa6";
 import { IoCallSharp } from "react-icons/io5";
 import { FaUserMd } from "react-icons/fa";
 import { useEffect } from "react";
-import CardDoctors from "@/components/about-page/CardDoctors";
-import Card from "@/components/app-page/card/Card";
-import TextIcon from "@/components/app-page/typograhy/TextIcon";
+import CardDoctors from "@/components/card/CardDoctors";
+import Card from "@/components/card/Card";
+import TextIcon from "@/components/typograhy/TextIcon";
 export default function About() {
     useEffect(() => {
         document.title = "Healthcare - About";

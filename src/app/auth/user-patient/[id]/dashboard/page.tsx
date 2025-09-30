@@ -3,8 +3,6 @@ import { CiCalendarDate, CiMail, CiPhone } from "react-icons/ci";
 import { useState, useEffect } from "react";
 import {
   fetchPatientWithId,
-  fetchAppointmentWithId,
-  fetchRealTimeData,
   fetchAppointmentIsReady,
 } from "@/utils/supabase/functions";
 import { FaUserMd, FaBriefcaseMedical } from "react-icons/fa";
@@ -13,7 +11,6 @@ import { useParams } from "next/navigation";
 export default function Dashboard() {
   const params = useParams();
   const [user, setUser] = useState<any>(null);
-  const [appointment, setAppointment] = useState<any | null>([]);
   const id = params.id;
   const fetchPatient = async () => {
     const { data, error } = await fetchPatientWithId(id);
@@ -23,27 +20,12 @@ export default function Dashboard() {
       setUser(data);
     }
   };
-  const fetchAppointment = async () => {
-    const { data, error } = await fetchAppointmentWithId("patient_id", id);
-    if (error) {
-      console.log(error);
-    } else {
-      setAppointment(data);
-    }
-  };
   const fetchAppointmentReady = async () => {
     await fetchAppointmentIsReady(new Date().toISOString());
   };
   useEffect(() => {
     fetchPatient();
-    fetchAppointment();
     fetchAppointmentReady();
-    fetchRealTimeData({
-      event: "*",
-      changes: "postgres_changes",
-      table: "appointment",
-      callBack: fetchAppointment,
-    });
   }, []);
   return (
     <div className="text-gray-700">
@@ -112,46 +94,6 @@ export default function Dashboard() {
           <h1>+0{user?.phone_number}</h1>
         </div>
       </div>
-      <h1 className="text-lg md:text-xl lg:text-2xl font-semibold mt-10">
-        Appointments Schedule
-      </h1>
-      {appointment.length > 0 ? (
-        <div className="overflow-x-auto mt-5">
-          <table className="table-auto border-collapse border border-gray-400 min-w-full text-left">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border border-gray-400 px-4 py-2">ID</th>
-                <th className="border border-gray-400 px-4 py-2">Name</th>
-                <th className="border border-gray-400 px-4 py-2">Date & Time</th>
-                <th className="border border-gray-400 px-4 py-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointment?.map((item: any, index: number) => (
-                <tr key={index}>
-                  <td className="border border-gray-400 px-4 py-2">
-                    {index + 1}
-                  </td>
-                  <td className="border border-gray-400 px-4 py-2">
-                    Dr.{item.doctor_name}
-                  </td>
-                  <td className="border border-gray-400 px-4 py-2">
-                    {new Date(item.appointment_datetime).toLocaleString()}
-                  </td>
-                  <td className="border border-gray-400 px-4 py-2">
-                    {item.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <>
-          <hr className="border-t border-gray-300 w-full my-2" />
-          <h1>No appointment schedule available.</h1>
-        </>
-      )}
     </div>
   );
 }
