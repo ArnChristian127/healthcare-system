@@ -52,6 +52,15 @@ export async function fetchPatientWithId(id: any) {
     .single();
   return { data, error };
 }
+export async function fetchDoctorWithId(id: any) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("doctor_user")
+    .select("*")
+    .eq("id", id)
+    .single();
+  return { data, error };
+}
 export async function fetchAppointmentWithId(target: string, id: any) {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -69,7 +78,7 @@ export async function fetchDoctorOnline() {
   return { data, error };
 }
 type realTimeProps = {
-  event: string;
+  event: "INSERT" | "UPDATE" | "DELETE" | "*";
   changes: any;
   table: string;
   callBack: (payload: any) => void;
@@ -82,7 +91,7 @@ export async function fetchRealTimeData({
 }: realTimeProps) {
   const supabase = createClient();
   const RealTimeChannel = supabase
-    .channel("doctor_user_changes")
+    .channel("event_changes")
     .on(
       changes,
       {

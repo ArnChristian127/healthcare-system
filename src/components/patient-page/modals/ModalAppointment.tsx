@@ -39,7 +39,7 @@ export default function ModalAppointment({
       patient_id: patient.id,
       patient_name: patient.username,
       appointment_datetime: isoDatetime,
-      status: "pending",
+      status: "Pending",
     });
     if (error) {
       setStatus(

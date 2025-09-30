@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/client";
 import { CiLogout } from "react-icons/ci";
 import { BsList } from "react-icons/bs";
 import Link from "next/link";
-import ModalLogout from "../modals/ModalLogout";
+import ModalLogout from "../patient-page/modals/ModalLogout";
 
 type LinkList = {
   href: string;
@@ -12,11 +12,13 @@ type LinkList = {
 };
 type DynamicNavigationProps = {
   id: any;
+  target: 'patient_user' | 'doctor_user';
   linkList: LinkList[];
 };
 export default function DynamicNavigation({
   id,
   linkList,
+  target,
 }: DynamicNavigationProps) {
   const [user, setUser] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,7 +26,7 @@ export default function DynamicNavigation({
   const supabase = createClient();
   const fetch = async () => {
     const { data, error } = await supabase
-      .from("patient_user")
+      .from(target)
       .select("*")
       .eq("id", id)
       .single();
@@ -50,7 +52,9 @@ export default function DynamicNavigation({
             <div className="w-7 h-7 bg-white text-gray-700 border-2 border-teal-400 rounded-full flex items-center justify-center font-medium">
               {user?.username.toUpperCase().charAt(0)}
             </div>
-            <h1 className="font-medium">{user?.username}</h1>
+            <h1 className="font-medium">
+              {target === "patient_user" ? user?.username : `Dr. ${user?.username}`}
+            </h1>
           </div>
           {linkList.map((link, index) => (
             <li
@@ -59,7 +63,7 @@ export default function DynamicNavigation({
             >
               {link.icons}
               <Link
-                href={`/auth/user-patient/${id}/${link.href}`}
+                href={`/auth/${target === 'patient_user' ? 'user-patient' : 'user-doctor'}/${id}/${link.href}`}
                 className="block"
               >
                 {link.label}
@@ -108,7 +112,7 @@ export default function DynamicNavigation({
                 >
                   {link.icons}
                   <Link
-                    href={`/auth/user-patient/${id}/${link.href}`}
+                    href={`/auth/${target === 'patient_user' ? 'user-patient' : 'user-doctor'}/${id}/${link.href}`}
                     className="block"
                   >
                     {link.label}

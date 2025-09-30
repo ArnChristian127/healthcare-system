@@ -26,7 +26,6 @@ export default function ModalAuthentication({
   const [isLoading, setLoading] = useState(true);
   const [isSubmitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<any | null>(null);
-
   const supabase = createClient();
   const router = useRouter();
 
@@ -129,7 +128,6 @@ export default function ModalAuthentication({
     }
     setSubmitting(false);
   };
-
   const loading = async () => {
     setLoading(true);
     const { data, error } = await supabase.auth.getSession();
@@ -141,7 +139,6 @@ export default function ModalAuthentication({
       setLoading(false);
     }
   };
-
   const back = () => {
     setRoles(null);
     setStatus(null);
@@ -152,11 +149,9 @@ export default function ModalAuthentication({
     setDate("");
     setPhoneNumber("");
   };
-
   useEffect(() => {
     loading();
   }, []);
-
   return (
     <>
       <div className="inset-0 fixed z-60 bg-black opacity-50" />
@@ -183,7 +178,6 @@ export default function ModalAuthentication({
                   <IoExitOutline className="text-lg md:text-xl lg:text-2xl" />
                 </button>
               </div>
-
               {roles && (
                 <>
                   {roles === "sign-up" && (
@@ -264,7 +258,6 @@ export default function ModalAuthentication({
                           />
                         </div>
                       </div>
-
                       <div className="flex-col flex">
                         <label
                           htmlFor="date"
@@ -310,7 +303,6 @@ export default function ModalAuthentication({
                   </button>
                 </>
               )}
-
               {!roles && (
                 <>
                   <button

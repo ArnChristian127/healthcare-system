@@ -2,7 +2,8 @@
 import { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useParams, useRouter } from "next/navigation";
-
+import { IoBarChartSharp } from "react-icons/io5";
+import DynamicNavigation from "@/components/navbar/DynamicNavigation";
 export default function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -29,7 +30,7 @@ export default function Layout({
         .select("*")
         .eq("id", id)
         .single();
-      document.title = `HealthCare - Dr.${data?.username}`;
+      document.title = `HealthCare - Dr. ${data?.username}`;
     };
     fetch();
   }, []);
@@ -43,5 +44,18 @@ export default function Layout({
     };
     fetch();
   }, []);
-  return <div className="font-bold">{children}</div>;
+  return (
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      <DynamicNavigation
+        id={id}
+        target="doctor_user"
+        linkList={[
+          { href: `dashboard`, label: "Overview", icons: <IoBarChartSharp /> }
+        ]}
+      />
+      <main className="px-6 py-4 mt-10 lg:mt-0 flex-1 lg:h-screen lg:overflow-y-auto">
+        <div className="container mx-auto py-5 lg:py-0">{children}</div>
+      </main>
+    </div>
+  );
 }

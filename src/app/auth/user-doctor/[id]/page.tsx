@@ -1,23 +1,12 @@
 "use client";
-import { useParams, useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 export default function Authentication() {
-  const supabase = createClient();
-  const params = useParams();
-  const id = params.id;
-  const router = useRouter();
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    await supabase
-      .from("doctor_user")
-      .update({ status: false })
-      .eq("id", id)
-      .single();
-    router.push("/main");
-  };
-  return (
-    <div>
-      <button onClick={handleLogout}>Logout</button>
-    </div>
-  );
+    const params = useParams();
+    const router = useRouter();
+    const id = params.id;
+    useEffect(() => {
+        router.push(`/auth/user-doctor/${id}/dashboard`);
+    }, [router]);
+    return null;
 }

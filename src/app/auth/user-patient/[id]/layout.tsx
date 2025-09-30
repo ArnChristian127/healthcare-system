@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { IoBarChartSharp } from "react-icons/io5";
 import { useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import DynamicNavigation from "@/components/patient-page/navbar/DynamicNavigation";
+import DynamicNavigation from "@/components/navbar/DynamicNavigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -38,10 +38,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex flex-col lg:flex-row">
       <DynamicNavigation
         id={id}
+        target="patient_user"
         linkList={[
           { href: `dashboard`, label: "Overview", icons: <IoBarChartSharp /> },
           { href: `appointment`, label: "Appointment", icons: <FaUserMd /> },
-          { href: `history`, label: "History", icons: <FaHistory /> },
+          { href: `medicalhistory`, label: "Medical History", icons: <FaHistory /> },
           { href: `balance`, label: "Balance", icons: <FaMoneyCheck /> },
         ]}
       />
