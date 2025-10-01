@@ -33,7 +33,6 @@ export default function ModalAuthentication({
     e.preventDefault();
     setSubmitting(true);
     setStatus(null);
-
     if (roles === "sign-up") {
       const error = await signUp(
         username,

@@ -6,7 +6,7 @@ export default function Redirect() {
     const router = useRouter();
     const id = params.id;
     useEffect(() => {
-        router.replace(`/auth/user-doctor/${id}/dashboard`);
+        router.push(`/auth/user-doctor/${id}/dashboard`);
     }, [router]);
     return null;
 }

@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/navbar/Navbar";
 import ModalAuthentication from "@/components/modals/ModalAuthentication";
 import Footer from "@/components/footer/FooterHome";
+import LoadingScreen from "@/components/loading/LoadingScreen";
 
 export default function MainApp({ children }: { children: React.ReactNode }) {
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
   const router = useRouter();
   useEffect(() => {
@@ -19,13 +21,25 @@ export default function MainApp({ children }: { children: React.ReactNode }) {
       const emailCheck = data?.user?.email?.endsWith("@doctor.com");
       if (emailCheck) {
         router.replace(`/auth/user-doctor/${data?.user?.id}`);
-      }
-      else{
+      } else {
         router.replace(`/auth/user-patient/${data?.user?.id}`);
       }
     };
     fetchSession();
   }, [router, supabase]);
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingScreen />
+      </div>
+    );
+  }
   return (
     <div className={`text-sm mt-15 text-gray-700`}>
       {isOpenModal && <ModalAuthentication onClick={setIsOpenModal} />}

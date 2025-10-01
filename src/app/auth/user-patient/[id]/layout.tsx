@@ -2,11 +2,13 @@
 import { FaUserMd, FaHistory, FaMoneyCheck } from "react-icons/fa";
 import { useParams, useRouter } from "next/navigation";
 import { IoBarChartSharp } from "react-icons/io5";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import NavbarDynamic from "@/components/navbar/NavbarDynamic";
+import LoadingScreen from "@/components/loading/LoadingScreen";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
   const params = useParams();
   const router = useRouter();
@@ -33,6 +35,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     };
     fetch();
   }, []);
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingScreen />
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
       <NavbarDynamic

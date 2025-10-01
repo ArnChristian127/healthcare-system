@@ -1,4 +1,16 @@
+//utility functions for supabase to make query more shorter
 import { createClient } from "./client";
+
+//Sign up with user table function
+/*
+Properties:
+- username: username of patient
+- email: email of patient
+- password: password of patient
+- address: address of the patient
+- date: date of birth of the patient
+- phonenumber: phone number of the patient
+*/
 export async function signUp(
   username: string,
   email: string,
@@ -43,6 +55,11 @@ export async function signUp(
   }
   return null;
 }
+//Fetch patient with specific id
+/*
+Properties:
+- id: target patient id
+*/
 export async function fetchPatientWithId(id: any) {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -52,6 +69,11 @@ export async function fetchPatientWithId(id: any) {
     .single();
   return { data, error };
 }
+//Fetch doctor with specific id
+/*
+Properties:
+- id: target doctor id
+*/
 export async function fetchDoctorWithId(id: any) {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -61,6 +83,12 @@ export async function fetchDoctorWithId(id: any) {
     .single();
   return { data, error };
 }
+//Fetch appointment with specific id
+/*
+Properties:
+- target: target the specific table
+- id: target appointment id
+*/
 export async function fetchAppointmentWithId(target: string, id: any) {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -69,6 +97,7 @@ export async function fetchAppointmentWithId(target: string, id: any) {
     .eq(target, id);
   return { data, error };
 }
+//Fetch doctor that is online
 export async function fetchDoctorOnline() {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -77,6 +106,15 @@ export async function fetchDoctorOnline() {
     .eq("status", true);
   return { data, error };
 }
+//Real time data fetching
+/*
+Properties:
+- channel: channel name for real time data fetching
+- event: event type for real time data fetching (INSERT, UPDATE, DELETE, *)
+- changes: changes in the table
+- table: table name for real time data fetching
+- callBack: callback function for real time data fetching
+*/
 type realTimeProps = {
   channel: string;
   event: "INSERT" | "UPDATE" | "DELETE" | "*";
@@ -111,6 +149,11 @@ export async function fetchRealTimeData({
     supabase.removeChannel(RealTimeChannel);
   };
 }
+//Fetch appointment that is ready to be confirmed
+/*
+Properties:
+- datetime: datetime of the appointment
+*/
 export async function fetchAppointmentIsReady(datetime: string) {
   const supabase = createClient();
   const { data } = await supabase
