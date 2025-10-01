@@ -34,7 +34,7 @@ export default function Appointment() {
   useEffect(() => {
     fetchAppointment();
     fetchRealTimeData({
-      channel: "appointment_patient_changes",
+      channel: "appointment_doctor_changes",
       event: "*",
       changes: "postgres_changes",
       table: "appointment",
