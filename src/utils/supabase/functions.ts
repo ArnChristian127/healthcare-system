@@ -20,19 +20,40 @@ export async function signUp(
   phonenumber: string
 ) {
   const supabase = createClient();
+  /*
+    we use a special regex (regular expression) to check the pattern of text
+    in this casewe want to make sure that the email is not a doctor's email
+    since patient and doctor are seperated in different tables
+  */
   const pattern = /^[^@]+@(?!doctor\.com$).+$/;
+  //check if the email is a doctor's email
   if (!pattern.test(email)) {
     return "Email must not be a doctor's email";
   }
+  //check if the username is empty, returns an error
   if (!username) {
     return "Username is required";
   }
+  //check if the date of birth is empty, returns an error
   if (!date) {
     return "Date of birth is required";
   }
+  //check if the phone number is empty, returns an error
   if (!phonenumber) {
     return "Phone number is required";
   }
+  //check if the address is empty, returns an error
+  if (!address) {
+    return "Address is required";
+  }
+  /*
+    here's the special function in supabase auth.signUp will eventually transmit to
+    the database itself by checking in authentication. auth.signUp have more feature
+    like destructuring the data and error. data represent our data that we get
+    after the registration was successful. error represent the error that we get
+    if the registration was failed. on the other hand, we also need to insert 
+    the data of the patient into the patient_user table.
+  */
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
@@ -40,9 +61,11 @@ export async function signUp(
   if (signUpError) {
     return signUpError.message;
   }
-  if (signUpData) {
+  //check if the user is not null, then insert the data into the patient_user table
+  if (signUpData.user) {
     const { error: insertError } = await supabase.from("patient_user").insert({
-      id: signUpData?.user?.id,
+      //the id from registration
+      id: signUpData.user.id,
       username,
       email,
       address,

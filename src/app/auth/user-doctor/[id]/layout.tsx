@@ -1,3 +1,4 @@
+//Step 7 Creating Authentication Guard
 "use client";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -15,6 +16,11 @@ export default function Layout({
   const params = useParams();
   const router = useRouter();
   const id = params.id;
+  /*
+    its the same thing as the previous one, the only difference
+    if the user is not authenticated and accidentally go here, it will eventually
+    return to the main page
+  */
   useEffect(() => {
     const fetchSession = async () => {
       const { data, error } = await supabase.auth.getUser();

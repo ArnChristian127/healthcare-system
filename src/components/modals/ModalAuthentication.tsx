@@ -1,12 +1,23 @@
-import { useEffect, useState } from "react";
+//Step 6 Creating JWTS Authentication
+/*
+  after creating the modal UI, we will also create a simple and fully functional
+  authentication system using supabase features that allows users to sign up,
+  sign in, and sign out.
+*/
+import { useState } from "react";
 import { signUp } from "@/utils/supabase/functions";
 import { IoIosWarning } from "react-icons/io";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoExitOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import AuthToast from "@/components/toast/AuthToast";
+import ErrorMessage from "@/components/toast/ErrorMessage";
 
+/*
+  this properties was created to handle the onClick event of the modal
+  it's also be used to close when the user clicks the close button
+  this code was chain in: components > navbar > Navbar.tsx
+*/
 type ModalAuthenticationProps = {
   onClick: (v: boolean) => void;
 };
@@ -14,9 +25,8 @@ type ModalAuthenticationProps = {
 export default function ModalAuthentication({
   onClick,
 }: ModalAuthenticationProps) {
-  const [roles, setRoles] = useState<"patient" | "doctor" | "sign-up" | null>(
-    null
-  );
+  //declaring state by typing the specific type
+  const [roles, setRoles] = useState<"patient" | "doctor" | "sign-up" | null>(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,10 +38,18 @@ export default function ModalAuthentication({
   const supabase = createClient();
   const router = useRouter();
 
+  /*
+    this function will handle the form submission and by using
+    React.FormEvent as props it wil prevent from restarting the web.
+  */
   const handlerForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
     setStatus(null);
+    /*
+      check if the user press sign up, the function from supabase will select as signUp
+      instead of signIn. You can check the function signUp in utils > supabase > functions.ts
+     */
     if (roles === "sign-up") {
       const error = await signUp(
         username,
@@ -41,48 +59,71 @@ export default function ModalAuthentication({
         date,
         phoneNumber
       );
+      //check if error
       if (error) {
         console.log(error);
         setStatus(
-          <AuthToast
+          <ErrorMessage
             icons={<IoIosWarning className="text-red-400 text-lg" />}
             isRed={true}
             status={error}
           />
         );
+      /*
+        if success, then it will display a success message and clear the form only gmail and password will remain
+        and set the roles to patient (goes in patient login)
+      */
       } else {
         console.log("success");
         setRoles("patient");
         setUsername("");
         setAddress("");
+        setPhoneNumber("");
         setDate("");
         setStatus(
-          <AuthToast
+          <ErrorMessage
             icons={<FaCircleCheck className="text-green-400 text-lg" />}
             status="Account created successfully!"
           />
         );
       }
+    /*
+      here's the sign in for patient and doctors
+      if the email ends with @doctor.com, then it will sign in as doctor
+      else it will sign in as patient
+    */
     } else if (roles === "patient") {
+      //check if email is doctor email then will throw an error
       if (email.endsWith("@doctor.com")) {
+        //this is only just loading animation
         setSubmitting(false);
         return setStatus(
-          <AuthToast
+          <ErrorMessage
             icons={<IoIosWarning className="text-red-400 text-lg" />}
             isRed={true}
             status="Email must be a patient email!"
           />
         );
       }
+      /*
+        here's the supabase JWT token once the user sign in
+        it will automatically go in the designated page
+        to see the token you can type data?.session?.access_token in console.log
+      */
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+      /*
+        once you get the data from signInWithPassword, you have the access to put the id
+        in the router.push to redirect the user to the dashboard and the value of id will go there
+        ex: localhost:3000/auth/user-patient/1234567890/dashboard (its called dynamic routing)
+      */
       const id = data?.user?.id;
       if (error) {
         console.log(error.message);
         setStatus(
-          <AuthToast
+          <ErrorMessage
             icons={<IoIosWarning className="text-red-400 text-lg" />}
             isRed={true}
             status={error.message}
@@ -93,6 +134,7 @@ export default function ModalAuthentication({
         router.push(`/auth/user-patient/${id}/dashboard`);
         onClick(false);
       }
+      //same as doctor but in doctor page
     } else if (roles === "doctor") {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -102,7 +144,7 @@ export default function ModalAuthentication({
       if (!email.endsWith("@doctor.com")) {
         setSubmitting(false);
         return setStatus(
-          <AuthToast
+          <ErrorMessage
             icons={<IoIosWarning className="text-red-400 text-lg" />}
             isRed={true}
             status="Email must be a doctor email!"
@@ -112,7 +154,7 @@ export default function ModalAuthentication({
       if (error) {
         console.log(error);
         setStatus(
-          <AuthToast
+          <ErrorMessage
             icons={<IoIosWarning className="text-red-400 text-lg" />}
             isRed={true}
             status={error.message}
@@ -126,6 +168,7 @@ export default function ModalAuthentication({
     }
     setSubmitting(false);
   };
+  //this function clears the entire output
   const back = () => {
     setRoles(null);
     setStatus(null);
@@ -157,6 +200,7 @@ export default function ModalAuthentication({
                 <IoExitOutline className="text-lg md:text-xl lg:text-2xl" />
               </button>
             </div>
+            {/* here's the roles condition, it will renders the ui base on the roles that you press in button */}
             {roles && (
               <>
                 {roles === "sign-up" && (
@@ -272,7 +316,6 @@ export default function ModalAuthentication({
                     {roles === "sign-up" ? "Sign Up" : "Sign In"}
                   </button>
                 )}
-
                 <button
                   type="button"
                   onClick={() => back()}
@@ -284,6 +327,7 @@ export default function ModalAuthentication({
             )}
             {!roles && (
               <>
+                {/* this is the condition if the user press patient button, it will render the patient ui */}
                 <button
                   type="button"
                   onClick={() => setRoles("patient")}
@@ -291,6 +335,7 @@ export default function ModalAuthentication({
                 >
                   Patient
                 </button>
+                {/* this is the condition if the user press doctor button, it will render the doctor ui */}
                 <button
                   type="button"
                   onClick={() => setRoles("doctor")}

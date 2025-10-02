@@ -1,10 +1,15 @@
+//Step 4 Creating frontend for main
 "use client";
 import { useEffect } from "react";
 export default function Gallery() {
+    //useEffect will run once when the component is mounted
+    //it will set the title of the page to "Healthcare - Gallery"
     useEffect(() => {
         document.title = "Healthcare - Gallery";
-    });
+    }, []);
     const pictures = [];
+    //this is just placeholder but it can be change in the future, but what it does is it loops from 8 since
+    //the file name is number sequence
     for (let i = 1; i <= 8; i++) {
         pictures.push(
             <div key={i} className="w-full h-[200px] md:h-[250px] lg:h-[300px]">

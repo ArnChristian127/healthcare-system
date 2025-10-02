@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { IoIosWarning } from "react-icons/io";
-import AuthToast from "../toast/AuthToast";
+import ErrorMessage from "../toast/ErrorMessage";
 type ModalAppointmentProps = {
   doctor: any;
   patient: any;
@@ -22,7 +22,7 @@ export default function ModalAppointment({
     setSubmitting(true);
     if (!datetime) {
       setStatus(
-        <AuthToast
+        <ErrorMessage
           icons={<IoIosWarning className="text-red-400 text-lg" />}
           isRed={true}
           status="Please select both date and time"
@@ -43,7 +43,7 @@ export default function ModalAppointment({
     });
     if (error) {
       setStatus(
-        <AuthToast
+        <ErrorMessage
           icons={<IoIosWarning className="text-red-400 text-lg" />}
           isRed={true}
           status={error.message}

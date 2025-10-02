@@ -1,9 +1,12 @@
+//Step 4 Creating frontend for main
 "use client";
 import { useEffect } from "react";
 export default function Contact() {
+    //useEffect will run once when the component is mounted
+    //it will set the title of the page to "Healthcare - Contact"
     useEffect(() => {
         document.title = "Healthcare - Contact";
-    });
+    }, []);
     return (
         <>
             <div className="relative bg-[url('/app-page/home/bg.jpg')] bg-cover bg-center text-white px-6 py-20 md:py-25 lg:py-30">

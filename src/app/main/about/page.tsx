@@ -1,3 +1,4 @@
+//Step 4 Creating frontend for main
 "use client";
 import { FaCircleCheck } from "react-icons/fa6";
 import { IoCallSharp } from "react-icons/io5";
@@ -7,9 +8,11 @@ import CardDoctors from "@/components/card/CardDoctors";
 import Card from "@/components/card/Card";
 import TextIcon from "@/components/typograhy/TextIcon";
 export default function About() {
+    //useEffect will run once when the component is mounted
+    //it will set the title of the page to "Healthcare - About"
     useEffect(() => {
         document.title = "Healthcare - About";
-    });
+    }, []);
     return (
         <>
             <div className="relative bg-[url('/app-page/home/bg.jpg')] bg-cover bg-center text-white px-6 py-20 md:py-25 lg:py-30">
@@ -32,6 +35,7 @@ export default function About() {
                             {"lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
                         </p>
                         <div className="mt-3 flex flex-col gap-3 items-center justify-center lg:items-start">
+                            {/*Component from components > typograhy > TextIcon to make it shorter*/}
                             <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
                             <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
                             <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
@@ -50,6 +54,7 @@ export default function About() {
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-10">
+                        {/*Component from components > card > CardDoctors to make it shorter*/}
                         <CardDoctors src="/app-page/about/doctor-1.jpg" alt="Doctor-1" name="Dr. John Doe">
                             <p className="font-medium">Dentist</p>
                         </CardDoctors>
@@ -73,6 +78,7 @@ export default function About() {
                         </p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {/*Component from components > card > Card to make it shorter*/}
                         <Card
                             icons={<FaUserMd />}
                             title="Health Consultation"

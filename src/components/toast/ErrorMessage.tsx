@@ -1,13 +1,13 @@
-type AuthToastProps = {
+type ErrorProps = {
   status: string | null;
   icons: any;
   isRed?: boolean;
 };
-export default function AuthToast({
+export default function ErrorMessage({
   icons,
   status,
   isRed = false,
-}: AuthToastProps) {
+}: ErrorProps) {
   return (
     <div
       className={`flex items-center gap-3 border ${

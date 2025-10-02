@@ -1,3 +1,4 @@
+//Step 4 Creating frontend for main
 "use client";
 import { FaCircleCheck } from "react-icons/fa6";
 import { FaUserMd } from "react-icons/fa";
@@ -7,6 +8,8 @@ import Link from "next/link";
 import Card from "@/components/card/Card";
 import TextIcon from "@/components/typograhy/TextIcon";
 export default function Home() {
+    //useEffect will run once when the component is mounted
+    //it will set the title of the page to "Healthcare - Home"
     useEffect(() => {
         document.title = "Healthcare - Home";
     }, []);
@@ -35,6 +38,7 @@ export default function Home() {
                             {"lorem ipsum dolor sit amet, consectetur adipiscing elit.\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua."}
                         </p>
                         <div className="mt-3 flex flex-col gap-3 items-center justify-center lg:items-start">
+                            {/*Component from components > typograhy > TextIcon to make it shorter*/}
                             <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
                             <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
                             <TextIcon icon={<FaCircleCheck className="text-teal-400" />} text="lorem ipsum dolor sit amet" />
@@ -56,6 +60,7 @@ export default function Home() {
                         </p>
                     </div>
                     <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {/*Component from components > card > Card to make it shorter*/}
                         <Card
                             icons={<FaUserMd/>}
                             title="Health Consultation"

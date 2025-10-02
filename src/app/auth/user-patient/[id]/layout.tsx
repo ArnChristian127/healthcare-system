@@ -1,3 +1,4 @@
+//Step 7 Creating Authentication Guard
 "use client";
 import { FaUserMd, FaHistory, FaMoneyCheck } from "react-icons/fa";
 import { useParams, useRouter } from "next/navigation";
@@ -13,6 +14,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const router = useRouter();
   const id = params.id;
+  /*
+    its the same thing as the previous one, the only difference
+    if the user is not authenticated and accidentally go here, it will eventually
+    return to the main page
+  */
   useEffect(() => {
     const fetchSession = async () => {
       const { data, error } = await supabase.auth.getUser();
